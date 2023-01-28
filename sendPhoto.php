@@ -1,6 +1,6 @@
 <?php
 include_once './user_error_class.php';
-header("Access-Control-Allow-Origin: http://localhost:3000");
+//header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: DELETE");
 header('Access-Control-Request-Headers: Content-Type, Authorization');
@@ -66,7 +66,7 @@ class new_photo extends user_error
             if(isset($_FILES['file']) && $this->checkType())
             {
                $this->file_id=$this->findId();
-               $this->file_directory='.\\images\\'.$this->file_id.'.'.pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+               $this->file_directory='../images/galery/'.$this->file_id.'.'.pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
                if(!$this->exist())
                {
                 $this->save_photo();

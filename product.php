@@ -1,6 +1,6 @@
 <?php
 
-include_once './PDO.php';
+include_once '../PDO.php';
 //header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: DELETE");
@@ -22,6 +22,46 @@ class product
         }
     }
 
+   public function getProducts()
+    {
+        if(!(isset($_GET['category'])))
+        {
+            die(json_encode(array('success'=>false, 'message'=>'Nie wybrano kategorii')));
+        }
+        $shop=htmlspecialchars(addslashes($_GET['category']))==='shop'?'shop':'rent';
+        $search=isset($_GET['search']) && $_GET['search']!=='' ? '%'.htmlspecialchars(addslashes($_GET['search'])).'%' :'';
+        $new= isset($_GET['new']) ? true : false;
+        $request='SELECT * FROM '.$shop;
+        $additional='';
+        if($new)
+        {
+            $additional.=' WHERE new=1';
+            if ($search!=='')$additional.=' AND';
+        }
+        if($search!=='')
+        {
+            if(!$new)$additional.=' WHERE';
+            $additional.=' name LIKE :search';
+        }
+        $request.=$additional;
+         echo($request);
+        
+        $sql=$this->PDO->prepare($request);
+        if($search!=='')$sql->bindParam('search', $search, PDO::PARAM_STR);
+       
+        $sql->execute();
+        $products=$sql->fetchAll(PDO::FETCH_ASSOC);
+        
+        $secRequest='SELECT id, images.*  from '.$shop.' INNER JOIN images ON '.$shop.'.id=images.productId'.$additional;
+        echo($secRequest);
+        $srq=$this->PDO->prepare($secRequest);
+        if($search!=='')$srq->bindParam('search', $search, PDO::PARAM_STR);
+        $srq->execute();
+        $results=$srq->FetchAll(PDO::FETCH_ASSOC);
+        return array('products'=>$products, 'images'=>$results);
+        
+
+    }
     private function checkImageType($fileName)
     {
         $imageType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
@@ -102,7 +142,7 @@ class product
         $dataBase = htmlspecialchars(addslashes($_GET['category']));
         $id = htmlspecialchars(addslashes($_GET['id']));
         if ($dataBase === 'images') $this->removeImage($id);
-        else $this->removeAllImages($dataBase, $productId);
+        else $this->removeAllImages($dataBase, $id);
         $sql = $this->PDO->prepare('DELETE from :dataBase WHERE id=:id');
         $sql->bindParam('dataBase', $dataBase, PDO::PARAM_STR);
         $sql->bindParam('id', $id, PDO::PARAM_INT);

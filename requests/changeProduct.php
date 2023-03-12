@@ -7,10 +7,10 @@ header("Content-Type: multipart/form-data");
 header("Access-Control-Allow-Credentials: true");
 include_once '../user.php';
 include_once '../product.php';
-$user= new user();
+$user= new user;
 if($user->authenticate()){
-    $product = new product();
+    $product = new product;
     
-    echo json_encode($product->addImage());
+    echo json_encode($product->changeProduct());
 }
 ?>

@@ -9,7 +9,7 @@ header("Access-Control-Allow-Credentials: true");
 include_once '../product.php';
 
 $product = new product();
-$responseBody=$product->getProducts();
+$responseBody=$product->getProductFromId();
 echo json_encode($responseBody);
 
 ?>

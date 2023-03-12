@@ -1,10 +1,10 @@
 <?php
 //header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Methods: PUT");
-header('Access-Control-Request-Headers: Content-Type, Authorization');
-header("Content-Type: application/json");
-header("Access-Control-Allow-Credentials: true");
+// header("Access-Control-Allow-Headers: Content-Type, Authorization");
+// header("Access-Control-Allow-Methods: PUT");
+// header('Access-Control-Request-Headers: Content-Type, Authorization');
+// header("Content-Type: application/json");
+// header("Access-Control-Allow-Credentials: true");
 class user
 {
     protected $user_login;
@@ -36,10 +36,11 @@ class user
     function change_password()
     {
 
-        $json = file_get_contents('php://input');
-        $new_password = base64_decode(json_decode($json));
-      
-
+   
+       
+        $new_password = $_POST['newPass'];
+      //base64_decode(json_decode($json));
+        try{
         $myFile = fopen('login.json', 'r');
         $file = json_decode(fread($myFile, filesize('login.json')), true);
         $data = array('login' => $file['login'], 'password' => $new_password);
@@ -49,6 +50,13 @@ class user
         $myFile = fopen('login.json', 'w');
         fwrite($myFile, $json_data);
         fclose($myFile);
+        return(array("success"=>true, "message"=> 'Hasło zostało zmienione. '));
+        }
+        catch(Exception $e)
+        {
+            $message=$e->getMessage();
+            return(array("success"=>false, "message"=> $message));
+        }
     }
 }
 ?>

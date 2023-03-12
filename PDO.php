@@ -6,18 +6,20 @@ private $username;
 private $password ;
 public $PDO;
 function __construct(){
-
+//5lH80VD4D3
 $this->servername = "localhost";
-$this->username = "products"; 
-$this->password = "admin";
+$this->username = "rentmars_admin"; 
+$this->password = "5lH80VD4D3";
 }
 function connection()
 {
     try{
-        $this->PDO = new PDO("mysql:host=$this->servername;dbname=products", $this->username, $this->password);
+        $this->PDO = new PDO("mysql:host=$this->servername;dbname=rentmars_products", $this->username, $this->password);
         return true;
     }catch(PDOException $e) {
-        return false;
+        $message=$e->getMessage();
+        die(array('success'=>false,'message'=> $message ));
+      
         
       }
    
